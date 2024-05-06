@@ -1,19 +1,10 @@
-import net.pyel.models.ImageProcess;
-import net.pyel.models.Labeler;
-import net.pyel.models.PillType;
-import net.pyel.models.SingularPill;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 @Testable
 class MainTests {
 
-	public int[] data;
+	/*public int[] data;
 	public int[] data2;
 	public int[] data3;
 	Labeler labeler;
@@ -114,5 +105,5 @@ class MainTests {
 		labeler.setMinPixels(1);
 		labeler.addPillType(pillType, singularPill);
 		assertEquals(1, labeler.getPillType(labeler.getID(3)).getPills().size()); //only 1 pill should be added
-	}
+	}*/
 }

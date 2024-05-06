@@ -1,12 +1,7 @@
 package net.pyel.benchmark;
 
-import net.pyel.models.Labeler;
-import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.RunnerException;
 
-import java.io.IOException;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Measurement(iterations = 10)
@@ -16,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Thread)
 public class MyBenchmark {
-	public int[] data;
+	/*public int[] data;
 	public int[] data2;
 	Random rnd = new Random();
 
@@ -65,5 +60,5 @@ public class MyBenchmark {
 	public static void main(String[] args) throws
 			RunnerException, IOException {
 		Main.main(args);
-	}
+	}*/
 }
