@@ -47,7 +47,9 @@ public class BaseController implements Initializable {
 	//██╔══╝░░░██╔██╗░██║╚██╔╝██║██║░░░░░░░░░░░░░██║░░██║██╔══╝░░██║░░██╗██║░░░░░██╔══██║██╔══██╗██╔══╝░░
 	//██║░░░░░██╔╝╚██╗██║░╚═╝░██║███████╗░░░░░░░░██████╔╝███████╗╚█████╔╝███████╗██║░░██║██║░░██║███████╗
 	//╚═╝░░░░░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝░░░░░░░░╚═════╝░╚══════╝░╚════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝
-
+	@FXML
+	private ImageView mapImageView;
+	private static final String MAP_IMAGE_PATH = "/map.jpg"; //path to file!
 
 	public BaseController() {
 		//panelAPI = BackgroundController.getPanelAPI();
@@ -132,10 +134,17 @@ public class BaseController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		if (setRun) {
-			//TODO SETUP LISTENER
+
+			Image mapImage = new Image(getClass().getResourceAsStream(MAP_IMAGE_PATH), 720, 720, false, false);
+			mapImageView.setImage(mapImage);
+
+			setupMainListener();
 			setRun = false;
 		}
 	}
 
+	private void setupMainListener() {
+
+	}
 
 }
