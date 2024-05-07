@@ -49,7 +49,7 @@ public class BaseController implements Initializable {
 	//╚═╝░░░░░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝░░░░░░░░╚═════╝░╚══════╝░╚════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝
 	@FXML
 	private ImageView mapImageView;
-	private static final String MAP_IMAGE_PATH = "/map.jpg"; //path to file!
+	private static final String MAP_IMAGE_PATH = "/map2.jpg"; //path to file!
 
 	public BaseController() {
 		//panelAPI = BackgroundController.getPanelAPI();
