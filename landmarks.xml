@@ -1,0 +1,29 @@
+<object-stream>
+  <net.pyel.models.Landmarks>
+    <landmarks>
+      <entry>
+        <string>Eiffel Tower</string>
+        <list>
+          <net.pyel.models.Coordinate>
+            <width>512</width>
+            <value>116308</value>
+            <x>84</x>
+            <y>227</y>
+          </net.pyel.models.Coordinate>
+          <net.pyel.models.Coordinate>
+            <width>512</width>
+            <value>116306</value>
+            <x>82</x>
+            <y>227</y>
+          </net.pyel.models.Coordinate>
+          <net.pyel.models.Coordinate>
+            <width>512</width>
+            <value>116307</value>
+            <x>83</x>
+            <y>227</y>
+          </net.pyel.models.Coordinate>
+        </list>
+      </entry>
+    </landmarks>
+  </net.pyel.models.Landmarks>
+</object-stream>

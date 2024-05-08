@@ -41,6 +41,7 @@ public class BaseController implements Initializable {
 	Parent terminalRoot;
 	Scene terminalScene;
 	boolean setRun = true;
+	LandmarksAPI landmarksAPI;
 
 	//███████╗██╗░░██╗███╗░░░███╗██╗░░░░░░░░░░░░░██████╗░███████╗░█████╗░██╗░░░░░░█████╗░██████╗░███████╗
 	//██╔════╝╚██╗██╔╝████╗░████║██║░░░░░░░░░░░░░██╔══██╗██╔════╝██╔══██╗██║░░░░░██╔══██╗██╔══██╗██╔════╝
@@ -51,11 +52,14 @@ public class BaseController implements Initializable {
 	@FXML
 	private ImageView mapImageView = new ImageView();
 	@FXML
+	private ImageView originalMapImageView = new ImageView();
+	@FXML
 	private ImageView bwMapImageView = new ImageView();
 	private static final String MAP_IMAGE_PATH = "/map2.jpg"; //path to file!
 	private static final String BWMAP_IMAGE_PATH = "/bwmap2.png"; //path to black&white file!
 
 	public BaseController() {
+		landmarksAPI = BackgroundController.getLandmarksAPI();
 		//panelAPI = BackgroundController.getPanelAPI();
 		//machines = panelAPI.panel.getMachines();
 		//games = panelAPI.panel.getGames();
@@ -142,6 +146,7 @@ public class BaseController implements Initializable {
 			Image mapImage = new Image(getClass().getResourceAsStream(MAP_IMAGE_PATH), 512, 512, false, false);
 			Image bwMapImage = new Image(getClass().getResourceAsStream(BWMAP_IMAGE_PATH), 512, 512, false, false);
 			mapImageView.setImage(mapImage);
+			originalMapImageView.setImage(mapImage);
 			bwMapImageView.setImage(bwMapImage);
 
 
@@ -157,6 +162,19 @@ public class BaseController implements Initializable {
 			double y = event.getY();
 
 			System.out.println(getImageCoordinates(x, y));
+
+
+			/*ArrayList<Coordinate> nates = new ArrayList<>();
+			nates.add(new Coordinate(84, 227));
+			nates.add(new Coordinate(82, 227));
+			nates.add(new Coordinate(83, 227));
+			landmarksAPI.landmarks.getLandmarks().put("Eiffel Tower", nates);
+			try {
+				landmarksAPI.save();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}*/
+
 		});
 	}
 
