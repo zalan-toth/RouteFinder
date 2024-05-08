@@ -63,7 +63,7 @@
         </MenuBar>
         <AnchorPane prefHeight="857.0" prefWidth="1443.0" style="-fx-background-image: #00001e;">
          <children>
-            <ImageView fx:id="mapImageView" fitHeight="720.0" fitWidth="720.0" layoutX="35.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="mapImageView" fitHeight="512.0" fitWidth="512.0" layoutX="35.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" />
             <TreeView layoutX="817.0" layoutY="27.0" prefHeight="712.0" prefWidth="320.0" />
          </children></AnchorPane>
     </children>

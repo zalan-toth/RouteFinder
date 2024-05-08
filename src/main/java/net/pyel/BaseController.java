@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
+import net.pyel.models.Coordinate;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -48,8 +49,11 @@ public class BaseController implements Initializable {
 	//██║░░░░░██╔╝╚██╗██║░╚═╝░██║███████╗░░░░░░░░██████╔╝███████╗╚█████╔╝███████╗██║░░██║██║░░██║███████╗
 	//╚═╝░░░░░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝░░░░░░░░╚═════╝░╚══════╝░╚════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝
 	@FXML
-	private ImageView mapImageView;
+	private ImageView mapImageView = new ImageView();
+	@FXML
+	private ImageView bwMapImageView = new ImageView();
 	private static final String MAP_IMAGE_PATH = "/map2.jpg"; //path to file!
+	private static final String BWMAP_IMAGE_PATH = "/bwmap2.png"; //path to black&white file!
 
 	public BaseController() {
 		//panelAPI = BackgroundController.getPanelAPI();
@@ -135,8 +139,11 @@ public class BaseController implements Initializable {
 
 		if (setRun) {
 
-			Image mapImage = new Image(getClass().getResourceAsStream(MAP_IMAGE_PATH), 720, 720, false, false);
+			Image mapImage = new Image(getClass().getResourceAsStream(MAP_IMAGE_PATH), 512, 512, false, false);
+			Image bwMapImage = new Image(getClass().getResourceAsStream(BWMAP_IMAGE_PATH), 512, 512, false, false);
 			mapImageView.setImage(mapImage);
+			bwMapImageView.setImage(bwMapImage);
+
 
 			setupMainListener();
 			setRun = false;
@@ -145,6 +152,40 @@ public class BaseController implements Initializable {
 
 	private void setupMainListener() {
 
+		mapImageView.setOnMouseClicked(event -> {
+			double x = event.getX();
+			double y = event.getY();
+
+			System.out.println(getImageCoordinates(x, y));
+		});
 	}
 
+	public Coordinate getImageCoordinates(double x, double y) {
+
+
+		double viewWidth = mapImageView.getFitWidth();
+		double viewHeight = mapImageView.getFitHeight();
+
+		// Actual dimensions of the image
+		double actualWidth = mapImageView.getImage().getWidth();
+		double actualHeight = mapImageView.getImage().getHeight();
+
+		// Compute the scale
+		double scaleX = actualWidth / viewWidth;
+		double scaleY = actualHeight / viewHeight;
+
+		// Adjusting for the actual display size within the ImageView
+		double displayWidth = mapImageView.getBoundsInLocal().getWidth();
+		double displayHeight = mapImageView.getBoundsInLocal().getHeight();
+
+		// Calculate the ratio of the original image to the displayed image
+		double ratioX = actualWidth / displayWidth;
+		double ratioY = actualHeight / displayHeight;
+
+		// Calculate the original coordinates of the click
+		double originalX = x * ratioX;
+		double originalY = y * ratioY;
+
+		return new Coordinate((int) originalX, (int) originalY);
+	}
 }
