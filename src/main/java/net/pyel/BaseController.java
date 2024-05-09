@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.*;
@@ -41,6 +42,9 @@ public class BaseController implements Initializable {
 	//private CustomList<Game> games = new CustomList<>();
 	Coordinate[] coordinates;
 	boolean[] valid;
+	Coordinate point1 = new Coordinate(-1);
+	Coordinate point2 = new Coordinate(-1);
+	Coordinate point3 = new Coordinate(-1);
 	Stage popupstage = new Stage();
 	Parent popuproot;
 	Scene popupScene;
@@ -52,6 +56,9 @@ public class BaseController implements Initializable {
 	CustomGraph customGraph = new CustomGraph();
 	Image bwMapImage;
 	Image mapImage;
+
+	WritableImage wi;
+	PixelWriter pw;
 
 	//███████╗██╗░░██╗███╗░░░███╗██╗░░░░░░░░░░░░░██████╗░███████╗░█████╗░██╗░░░░░░█████╗░██████╗░███████╗
 	//██╔════╝╚██╗██╔╝████╗░████║██║░░░░░░░░░░░░░██╔══██╗██╔════╝██╔══██╗██║░░░░░██╔══██╗██╔══██╗██╔════╝
@@ -69,6 +76,18 @@ public class BaseController implements Initializable {
 	private Text processingText = new Text();
 	@FXML
 	private Text pixelUnitsText = new Text();
+	@FXML
+	private Text point1Text = new Text();
+	@FXML
+	private Text point2Text = new Text();
+	@FXML
+	private Text point3Text = new Text();
+	@FXML
+	private CheckBox point1CheckBox = new CheckBox();
+	@FXML
+	private CheckBox point2CheckBox = new CheckBox();
+	@FXML
+	private CheckBox point3CheckBox = new CheckBox();
 	@FXML
 	private ImageView originalMapImageView = new ImageView();
 	@FXML
@@ -163,6 +182,8 @@ public class BaseController implements Initializable {
 		coordinates = new Coordinate[coordSize];
 		valid = new boolean[coordSize];
 
+		wi = new WritableImage((int) mapImage.getWidth(), (int) mapImage.getHeight());
+		pw = wi.getPixelWriter();
 		System.out.println("MAP SIZE = " + coordinates.length);
 		mapImageView.setImage(mapImage);
 		originalMapImageView.setImage(mapImage);
@@ -225,6 +246,88 @@ public class BaseController implements Initializable {
 		}
 	}
 
+	public void doBFS() {
+		//System.out.println(getImageCoordinates(point1.getX(), point1.getY()));
+		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
+		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
+		System.out.println("Selected Node 1: " + cn1);
+		System.out.println("Selected Node 2: " + cn2);
+
+		List<CustomNode> bfsResult = customGraph.findShortestPathBFS(cn1, cn2);
+		List<Coordinate> bfs = new ArrayList<>();
+		for (CustomNode node : bfsResult) {
+			System.out.print("[" + node.getX() + " " + node.getY() + "]");
+			bfs.add(new Coordinate(node.getX(), node.getY()));
+		}
+		TreeItem<Coordinate> rootItem = new TreeItem<>(bfs.get(0));
+		rootItem.setExpanded(true);
+		treeView.setRoot(rootItem);
+
+		for (Coordinate cd : bfs) {
+			TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
+			rootItem.getChildren().add(treeItem);
+		}
+
+		for (Coordinate coordinate : coordinates) {
+			if (bfs.contains(coordinate)) {
+				pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFF0000FF);
+			}
+		}
+		overlayImageView.setImage(wi);
+
+		pixelUnitsText.setText("BFS result: " + bfs.size() + " units");
+	}
+
+	public void doDFS() {
+		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
+		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
+		System.out.println("Selected Node 1: " + cn1);
+		System.out.println("Selected Node 2: " + cn2);
+
+		List<CustomNode> dfsResult = customGraph.findPathDFS(cn1, cn2);
+		List<Coordinate> dfs = new ArrayList<>();
+		for (CustomNode node : dfsResult) {
+			System.out.print("[" + node.getX() + " " + node.getY() + "]");
+			dfs.add(new Coordinate(node.getX(), node.getY()));
+		}
+		TreeItem<Coordinate> rootItem = new TreeItem<>(dfs.get(0));
+		rootItem.setExpanded(true);
+		treeView.setRoot(rootItem);
+
+		for (Coordinate cd : dfs) {
+			TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
+			rootItem.getChildren().add(treeItem);
+		}
+
+		for (Coordinate coordinate : coordinates) {
+			if (dfs.contains(coordinate)) {
+				pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFF00FF00);
+			}
+		}
+		overlayImageView.setImage(wi);
+
+		pixelUnitsText.setText("DFS result: " + dfs.size() + " units");
+	}
+
+	public void doDjiktra() {
+
+	}
+
+	public void resetPointSelection() {
+		point1 = new Coordinate(-1);
+		point1CheckBox.setSelected(false);
+		point1Text.setText("-");
+		point2 = new Coordinate(-1);
+		point2CheckBox.setSelected(false);
+		point2Text.setText("-");
+		point3 = new Coordinate(-1);
+		point3CheckBox.setSelected(false);
+		point3Text.setText("-");
+		for (Coordinate coordinate : coordinates) {
+			pw.setArgb(coordinate.getX(), coordinate.getY(), 0x00000000);
+		}
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -247,38 +350,50 @@ public class BaseController implements Initializable {
 			int x = (int) event.getX();
 			int y = (int) event.getY();
 
-			System.out.println(getImageCoordinates(x, y));
-			CustomNode cn = customGraph.getNode(new Coordinate(x, y));
-			System.out.println("Selected Node: " + cn);
-
-			List<CustomNode> bfsResult = customGraph.findShortestPathBFS(cn, customGraph.getNode(new Coordinate(452, 213)));
-			List<Coordinate> bfs = new ArrayList<>();
-			for (CustomNode node : bfsResult) {
-				System.out.print("[" + node.getX() + " " + node.getY() + "]");
-				bfs.add(new Coordinate(node.getX(), node.getY()));
-			}
-			TreeItem<Coordinate> rootItem = new TreeItem<>(bfs.get(0));
-			rootItem.setExpanded(true);
-			treeView.setRoot(rootItem);
-
-			for (Coordinate cd : bfs) {
-				TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
-				rootItem.getChildren().add(treeItem);
-			}
-
-			WritableImage wi = new WritableImage((int) mapImage.getWidth(), (int) mapImage.getHeight());
-			PixelWriter pw = wi.getPixelWriter();
-			for (Coordinate coordinate : coordinates) {
-				if (bfs.contains(coordinate)) {
-					pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFF0000FF);
+			if (point1CheckBox.isSelected()) {
+				if (valid[new Coordinate(x, y).getValue()]) {
+					point1.setXY(x, y);
+					point1Text.setText(point1.toString());
+					point1CheckBox.setSelected(false);
 				} else {
-					pw.setArgb(coordinate.getX(), coordinate.getY(), 0x00000000);
+					point1Text.setText("Last point was invalid (not road)");
+				}
+			}
+
+			if (point2CheckBox.isSelected()) {
+				if (valid[new Coordinate(x, y).getValue()]) {
+					point2.setXY(x, y);
+					point2Text.setText(point2.toString());
+					point2CheckBox.setSelected(false);
+				} else {
+					point2Text.setText("Last point was invalid (not road)");
+				}
+			}
+
+			if (point3CheckBox.isSelected()) {
+				if (valid[new Coordinate(x, y).getValue()]) {
+					point3.setXY(x, y);
+					point3Text.setText(point3.toString());
+					point3CheckBox.setSelected(false);
+				} else {
+					point3Text.setText("Last point was invalid (not road)");
+				}
+			}
+			for (Coordinate coordinate : coordinates) {
+				pw.setArgb(coordinate.getX(), coordinate.getY(), 0x00000000);
+			}
+			for (Coordinate coordinate : coordinates) {
+				if (coordinate.getValue() == point1.getValue() || coordinate.getValue() == point2.getValue() || coordinate.getValue() == point3.getValue()) {
+					pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFFFF0000);
+					pw.setArgb(coordinate.getX() + 1, coordinate.getY(), 0xFFFF0000);
+					pw.setArgb(coordinate.getX() - 1, coordinate.getY(), 0xFFFF0000);
+					pw.setArgb(coordinate.getX(), coordinate.getY() + 1, 0xFFFF0000);
+					pw.setArgb(coordinate.getX(), coordinate.getY() - 1, 0xFFFF0000);
 				}
 			}
 			overlayImageView.setImage(wi);
-			System.out.println("Selected Node: " + cn);
 
-			pixelUnitsText.setText("BFS result: " + bfs.size() + " units");
+
 			/*if (cn != null) {
 				List<CustomNode> bfsResult = customGraph.bfs(cn);
 

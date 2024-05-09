@@ -106,7 +106,41 @@ public class CustomGraph {
 		for (CustomNode at = targetNode; at != null; at = parentMap.get(at)) {
 			path.add(at);
 		}
-		Collections.reverse(path);
+		Collections.reverse(path); //reverse it to correct the order!
 		return path;
+	}
+
+	public List<CustomNode> findPathDFS(CustomNode startNode, CustomNode targetNode) {
+		Map<CustomNode, CustomNode> parentMap = new HashMap<>();
+		Set<CustomNode> visited = new HashSet<>();
+		if (dfs(startNode, targetNode, visited, parentMap)) {
+			return constructPath(parentMap, targetNode);
+		}
+		return Collections.emptyList(); // Return empty list when no path found
+	}
+
+	// Helper method to perform DFS
+	private boolean dfs(CustomNode currentNode, CustomNode targetNode, Set<CustomNode> visited, Map<CustomNode, CustomNode> parentMap) {
+		visited.add(currentNode);
+		if (currentNode.equals(targetNode)) {
+			return true;
+		}
+
+		for (CustomEdge edge : edges) {
+			CustomNode adjacentNode = null;
+			if (edge.getSource().equals(currentNode)) {
+				adjacentNode = edge.getDestination();
+			} else if (edge.getDestination().equals(currentNode)) {
+				adjacentNode = edge.getSource();
+			}
+
+			if (adjacentNode != null && !visited.contains(adjacentNode)) {
+				parentMap.put(adjacentNode, currentNode);
+				if (dfs(adjacentNode, targetNode, visited, parentMap)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
