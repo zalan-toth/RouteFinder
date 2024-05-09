@@ -7,6 +7,16 @@ public class CustomNode {
 	private String name;
 	private boolean cultural = false;
 
+	@Override
+	public String toString() {
+		return "CustomNode{" +
+				"x=" + x +
+				", y=" + y +
+				", name='" + name + '\'' +
+				", cultural=" + cultural +
+				'}';
+	}
+
 	public CustomNode(int x, int y) {
 		this.x = x;
 		this.y = y;
