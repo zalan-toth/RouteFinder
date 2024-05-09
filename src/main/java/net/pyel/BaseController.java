@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.image.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -59,6 +61,8 @@ public class BaseController implements Initializable {
 	//╚═╝░░░░░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝░░░░░░░░╚═════╝░╚══════╝░╚════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝
 	@FXML
 	private ImageView overlayImageView = new ImageView();
+	@FXML
+	private TreeView<Coordinate> treeView = new TreeView<>();
 	@FXML
 	private ImageView mapImageView = new ImageView();
 	@FXML
@@ -152,77 +156,82 @@ public class BaseController implements Initializable {
 		initialize(null, null);
 	}
 
+	private void createGraph() {
+		mapImage = new Image(getClass().getResourceAsStream(MAP_IMAGE_PATH), 512, 512, false, false);
+		bwMapImage = new Image(getClass().getResourceAsStream(BWMAP_IMAGE_PATH), 512, 512, false, false);
+		int coordSize = (int) (mapImage.getWidth() * mapImage.getHeight());
+		coordinates = new Coordinate[coordSize];
+		valid = new boolean[coordSize];
+
+		System.out.println("MAP SIZE = " + coordinates.length);
+		mapImageView.setImage(mapImage);
+		originalMapImageView.setImage(mapImage);
+		bwMapImageView.setImage(bwMapImage);
+
+		PixelReader pr = bwMapImage.getPixelReader();
+		for (int x = 0; x < bwMapImage.getWidth(); x++) {
+			for (int y = 0; y < bwMapImage.getHeight(); y++) {
+				int v = pr.getArgb(x, y);
+				Coordinate coord = new Coordinate(x, y);
+				if (v == 0xFFFFFFFF) {
+					valid[coord.getValue()] = true;
+				} else {
+					valid[coord.getValue()] = false;
+				}
+				coordinates[coord.getValue()] = coord;
+			}
+		}
+		for (Coordinate coordinate : coordinates) {
+			if (valid[coordinate.getValue()]) {
+				customGraph.addNode(coordinate, new CustomNode(coordinate.getX(), coordinate.getY()));
+			}
+		}
+
+		for (Coordinate coordinate : coordinates) {
+			if (valid[coordinate.getValue()]) {
+				//CONNECTING NODE TO THE ABOVE NODE USING AN EDGE! //TODO ABOVE
+				if ((coordinate.getY() != 0)) {
+					Coordinate coordinateAbove = new Coordinate(coordinate.getX(), coordinate.getY() - 1);
+					if (valid[coordinateAbove.getValue()]) {
+						CustomNode nodeAbove = customGraph.getNode(coordinateAbove);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeAbove));
+					}
+				}
+				//CONNECTING NODE TO THE BELOW NODE USING AN EDGE! //TODO BELOW
+				if ((coordinate.getY() != (mapImage.getHeight() - 1))) {
+					Coordinate coordinateBelow = new Coordinate(coordinate.getX(), coordinate.getY() + 1);
+					if (valid[coordinateBelow.getValue()]) {
+						CustomNode nodeBelow = customGraph.getNode(coordinateBelow);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeBelow));
+					}
+				}
+				//CONNECTING NODE TO THE RIGHT NODE USING AN EDGE! //TODO RIGHT
+				if ((coordinate.getX() != (mapImage.getWidth() - 1))) {
+					Coordinate coordinateToTheRight = new Coordinate(coordinate.getX() + 1, coordinate.getY());
+					if (valid[coordinateToTheRight.getValue()]) {
+						CustomNode nodeToTheRight = customGraph.getNode(coordinateToTheRight);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeToTheRight));
+					}
+				}
+				//CONNECTING NODE TO THE LEFT NODE USING AN EDGE! //TODO LEFT
+				if ((coordinate.getX() != 0)) {
+					Coordinate coordinateToTheLeft = new Coordinate(coordinate.getX() - 1, coordinate.getY());
+					if (valid[coordinateToTheLeft.getValue()]) {
+						CustomNode nodeToTheLeft = customGraph.getNode(coordinateToTheLeft);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeToTheLeft));
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		if (setRun) {
 
-			mapImage = new Image(getClass().getResourceAsStream(MAP_IMAGE_PATH), 512, 512, false, false);
-			bwMapImage = new Image(getClass().getResourceAsStream(BWMAP_IMAGE_PATH), 512, 512, false, false);
-			int coordSize = (int) (mapImage.getWidth() * mapImage.getHeight());
-			coordinates = new Coordinate[coordSize];
-			valid = new boolean[coordSize];
+			createGraph();
 
-			System.out.println("MAP SIZE = " + coordinates.length);
-			mapImageView.setImage(mapImage);
-			originalMapImageView.setImage(mapImage);
-			bwMapImageView.setImage(bwMapImage);
-
-			PixelReader pr = bwMapImage.getPixelReader();
-			for (int x = 0; x < bwMapImage.getWidth(); x++) {
-				for (int y = 0; y < bwMapImage.getHeight(); y++) {
-					int v = pr.getArgb(x, y);
-					Coordinate coord = new Coordinate(x, y);
-					if (v == 0xFFFFFFFF) {
-						valid[coord.getValue()] = true;
-					} else {
-						valid[coord.getValue()] = false;
-					}
-					coordinates[coord.getValue()] = coord;
-				}
-			}
-			for (Coordinate coordinate : coordinates) {
-				if (valid[coordinate.getValue()]) {
-					customGraph.addNode(coordinate, new CustomNode(coordinate.getX(), coordinate.getY()));
-				}
-			}
-
-			for (Coordinate coordinate : coordinates) {
-				if (valid[coordinate.getValue()]) {
-					//CONNECTING NODE TO THE ABOVE NODE USING AN EDGE! //TODO ABOVE
-					if ((coordinate.getY() != 0)) {
-						Coordinate coordinateAbove = new Coordinate(coordinate.getX(), coordinate.getY() - 1);
-						if (valid[coordinateAbove.getValue()]) {
-							CustomNode nodeAbove = customGraph.getNode(coordinateAbove);
-							customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeAbove));
-						}
-					}
-					//CONNECTING NODE TO THE BELOW NODE USING AN EDGE! //TODO BELOW
-					if ((coordinate.getY() != (mapImage.getHeight() - 1))) {
-						Coordinate coordinateBelow = new Coordinate(coordinate.getX(), coordinate.getY() + 1);
-						if (valid[coordinateBelow.getValue()]) {
-							CustomNode nodeBelow = customGraph.getNode(coordinateBelow);
-							customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeBelow));
-						}
-					}
-					//CONNECTING NODE TO THE RIGHT NODE USING AN EDGE! //TODO RIGHT
-					if ((coordinate.getX() != (mapImage.getWidth() - 1))) {
-						Coordinate coordinateToTheRight = new Coordinate(coordinate.getX() + 1, coordinate.getY());
-						if (valid[coordinateToTheRight.getValue()]) {
-							CustomNode nodeToTheRight = customGraph.getNode(coordinateToTheRight);
-							customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeToTheRight));
-						}
-					}
-					//CONNECTING NODE TO THE LEFT NODE USING AN EDGE! //TODO LEFT
-					if ((coordinate.getX() != 0)) {
-						Coordinate coordinateToTheLeft = new Coordinate(coordinate.getX() - 1, coordinate.getY());
-						if (valid[coordinateToTheLeft.getValue()]) {
-							CustomNode nodeToTheLeft = customGraph.getNode(coordinateToTheLeft);
-							customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeToTheLeft));
-						}
-					}
-				}
-			}
 
 			setupMainListener();
 			setRun = false;
@@ -248,7 +257,14 @@ public class BaseController implements Initializable {
 				System.out.print("[" + node.getX() + " " + node.getY() + "]");
 				bfs.add(new Coordinate(node.getX(), node.getY()));
 			}
+			TreeItem<Coordinate> rootItem = new TreeItem<>(bfs.get(0));
+			rootItem.setExpanded(true);
+			treeView.setRoot(rootItem);
 
+			for (Coordinate cd : bfs) {
+				TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
+				rootItem.getChildren().add(treeItem);
+			}
 
 			WritableImage wi = new WritableImage((int) mapImage.getWidth(), (int) mapImage.getHeight());
 			PixelWriter pw = wi.getPixelWriter();
