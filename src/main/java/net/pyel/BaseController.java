@@ -279,34 +279,7 @@ public class BaseController implements Initializable {
 	}
 
 	public void doDFS() {
-		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
-		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
-		System.out.println("Selected Node 1: " + cn1);
-		System.out.println("Selected Node 2: " + cn2);
-
-		List<CustomNode> dfsResult = customGraph.findPathDFS(cn1, cn2);
-		List<Coordinate> dfs = new ArrayList<>();
-		for (CustomNode node : dfsResult) {
-			System.out.print("[" + node.getX() + " " + node.getY() + "]");
-			dfs.add(new Coordinate(node.getX(), node.getY()));
-		}
-		TreeItem<Coordinate> rootItem = new TreeItem<>(dfs.get(0));
-		rootItem.setExpanded(true);
-		treeView.setRoot(rootItem);
-
-		for (Coordinate cd : dfs) {
-			TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
-			rootItem.getChildren().add(treeItem);
-		}
-
-		for (Coordinate coordinate : coordinates) {
-			if (dfs.contains(coordinate)) {
-				pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFF00FF00);
-			}
-		}
-		overlayImageView.setImage(wi);
-
-		pixelUnitsText.setText("DFS result: " + dfs.size() + " units");
+		
 	}
 
 	public void doDjiktra() {
