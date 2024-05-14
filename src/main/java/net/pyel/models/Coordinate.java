@@ -1,7 +1,7 @@
 package net.pyel.models;
 
 public class Coordinate {
-	private int width = 4; //CHANGE THIS TO 4 WHEN DOING JUnit Testing!! 512 is the default
+	private int width = 512; //CHANGE THIS TO 4 WHEN DOING JUnit Testing!! 512 is the default
 	private int value;
 	private int x;
 	private int y;

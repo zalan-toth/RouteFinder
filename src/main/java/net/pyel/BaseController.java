@@ -275,7 +275,7 @@ public class BaseController implements Initializable {
 		}
 		overlayImageView.setImage(wi);
 
-		pixelUnitsText.setText("BFS result: " + bfs.size() + " units");
+		pixelUnitsText.setText("Path length: " + bfs.size() + " units");
 	}
 
 	public void doDFS() {
