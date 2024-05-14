@@ -12,8 +12,6 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 /**
- * CargoAPI, API for Cargo, save and load happens here, utilized by backgroundcontroller
- *
  * @author Zalán Tóth
  */
 public class LandmarksAPI {
