@@ -49,7 +49,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="884.0" prefWidth="1434" style="-fx-background-color: #00001e;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.pyel.BaseController">
+<VBox prefHeight="884.0" prefWidth="1434" style="-fx-background-color: #00001e;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.pyel.BaseController">
     <children>
         <MenuBar>
             <menus>
@@ -94,12 +94,12 @@
                   <Font size="28.0" />
                </font>
             </Button>
-            <Button disable="true" layoutX="651.0" layoutY="167.0" mnemonicParsing="false" onAction="#doDFS" prefHeight="53.0" prefWidth="162.0" style="-fx-background-color: #ab8aff;" text="DFS" textFill="#00001e">
+            <Button layoutX="651.0" layoutY="167.0" mnemonicParsing="false" onAction="#doDFS" prefHeight="53.0" prefWidth="162.0" style="-fx-background-color: #ab8aff;" stylesheets="@css/buttoncss.css" text="DFS" textFill="#00001e">
                <font>
                   <Font size="28.0" />
                </font>
             </Button>
-            <Button disable="true" layoutX="873.0" layoutY="167.0" mnemonicParsing="false" onAction="#doDjiktra" prefHeight="53.0" prefWidth="162.0" style="-fx-background-color: #ab8aff;" text="Djiktra" textFill="#00001e">
+            <Button layoutX="873.0" layoutY="167.0" mnemonicParsing="false" onAction="#doDijkstra" prefHeight="53.0" prefWidth="162.0" style="-fx-background-color: #ab8aff;" text="Djiktra" textFill="#00001e">
                <font>
                   <Font size="28.0" />
                </font>

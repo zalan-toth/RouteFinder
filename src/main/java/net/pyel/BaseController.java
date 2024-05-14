@@ -1,5 +1,6 @@
 package net.pyel;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -19,9 +20,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Base Controller - Manages all windows with fxml
@@ -108,7 +107,7 @@ public class BaseController implements Initializable {
 	 */
 	@FXML
 	private void quit() {
-		javafx.application.Platform.exit();
+		Platform.exit();
 	}
 
 	@FXML
@@ -250,14 +249,34 @@ public class BaseController implements Initializable {
 		//System.out.println(getImageCoordinates(point1.getX(), point1.getY()));
 		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
 		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
-		System.out.println("Selected Node 1: " + cn1);
-		System.out.println("Selected Node 2: " + cn2);
+		CustomNode cn3 = null;
+		if((point3.getX() != -1) && point3.getY() != -1) {
+			cn3 = customGraph.getNode(new Coordinate(point3.getX(), point3.getY()));
+		}
+
+//		System.out.println("Selected Node 1: " + cn1);
+//		System.out.println("Selected Node 2: " + cn2);
 
 		List<CustomNode> bfsResult = customGraph.findShortestPathBFS(cn1, cn2);
+
+		List<CustomNode> bfsResult2 = new ArrayList<>();
+
+		if(cn3 != null){
+			bfsResult2 = customGraph.findShortestPathBFS(cn2, cn3);
+			}
+
 		List<Coordinate> bfs = new ArrayList<>();
+		List<Coordinate> bfs2 = new ArrayList<>();
+
 		for (CustomNode node : bfsResult) {
-			System.out.print("[" + node.getX() + " " + node.getY() + "]");
+//			System.out.print("[" + node.getX() + " " + node.getY() + "]");
 			bfs.add(new Coordinate(node.getX(), node.getY()));
+		}
+		if(cn3 != null){
+			for (CustomNode node : bfsResult2) {
+				System.out.print("[" + node.getX() + " " + node.getY() + "]");
+				bfs.add(new Coordinate(node.getX(), node.getY()));
+			}
 		}
 		TreeItem<Coordinate> rootItem = new TreeItem<>(bfs.get(0));
 		rootItem.setExpanded(true);
@@ -275,16 +294,160 @@ public class BaseController implements Initializable {
 		}
 		overlayImageView.setImage(wi);
 
-		pixelUnitsText.setText("Path length: " + bfs.size() + " units");
+//		pixelUnitsText.setText("Path length: " + bfs.size() + " units");
 	}
-
 	public void doDFS() {
+		System.out.println("DFS");
+		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
+		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
+		CustomNode cn3 = null;
 
+		if (point3.getX() != -1 && point3.getY() != -1) {
+			cn3 = customGraph.getNode(new Coordinate(point3.getX(), point3.getY()));
+		}
+
+		List<CustomNode> dfsResult = customGraph.findShortestPathDFS(cn1, cn2);
+		List<CustomNode> dfsResult2 = new ArrayList<>();
+
+		if (cn3 != null) {
+			dfsResult2 = customGraph.findShortestPathDFS(cn2, cn3);
+		}
+
+		List<Coordinate> dfs = new ArrayList<>();
+		List<Coordinate> dfs2 = new ArrayList<>();
+
+		for (CustomNode node : dfsResult) {
+			dfs.add(new Coordinate(node.getX(), node.getY())); // Add coordinates from dfsResult
+		}
+
+		if (cn3 != null) {
+			for (CustomNode node : dfsResult2) {
+				dfs2.add(new Coordinate(node.getX(), node.getY())); // Add coordinates from dfsResult2
+			}
+		}
+
+		// Mark only the nodes along the shortest path
+		for (Coordinate pathCoordinate : dfs) {
+			int x = pathCoordinate.getX();
+			int y = pathCoordinate.getY();
+			pw.setArgb(x, y, 0xFF0000FF); // Color the pixel
+		}
+
+		if (cn3 != null) {
+			for (Coordinate pathCoordinate : dfs2) {
+				int x = pathCoordinate.getX();
+				int y = pathCoordinate.getY();
+				pw.setArgb(x, y, 0xFF0000FF); // Color the pixel
+			}
+		}
+
+		overlayImageView.setImage(wi); // Update the image view
 	}
 
-	public void doDjiktra() {
 
+
+//	public void doDFS() {
+//		System.out.println("Initiated DFS");
+//		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
+//		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
+//		CustomNode cn3 = null;
+//
+//		if (point3.getX() != -1 && point3.getY() != -1) {
+//			cn3 = customGraph.getNode(new Coordinate(point3.getX(), point3.getY()));
+//		}
+//
+//		List<CustomNode> dfsResult = customGraph.findShortestPathDFS(cn1, cn2);
+//		List<CustomNode> dfsResult2 = new ArrayList<>();
+//
+//		if (cn3 != null) {
+//			dfsResult2 = customGraph.findShortestPathDFS(cn2, cn3);
+//		}
+//
+//		List<Coordinate> dfs = new ArrayList<>();
+//		List<Coordinate> dfs2 = new ArrayList<>();
+//
+//		for (CustomNode node : dfsResult) {
+//			dfs.add(new Coordinate(node.getX(), node.getY()));
+//		}
+//
+//		if (cn3 != null) {
+//			for (CustomNode node : dfsResult2) {
+//				dfs2.add(new Coordinate(node.getX(), node.getY()));
+//			}
+//		}
+//
+//		TreeItem<Coordinate> rootItem = new TreeItem<>(dfs.get(0));
+//		rootItem.setExpanded(true);
+//		treeView.setRoot(rootItem);
+//
+//		for (Coordinate cd : dfs) {
+//			TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
+//			rootItem.getChildren().add(treeItem);
+//		}
+//
+//		if (cn3 != null) {
+//			for (Coordinate cd : dfs2) {
+//				TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
+//				rootItem.getChildren().add(treeItem);
+//			}
+//		}
+//
+//		for (Coordinate coordinate : coordinates) {
+//			if (dfs.contains(coordinate) || dfs2.contains(coordinate)) {
+//				pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFF0000FF);
+//			}
+//		}
+//
+//		overlayImageView.setImage(wi);
+//	}
+
+	public void doDijkstra() {
+		CustomNode cn1 = customGraph.getNode(new Coordinate(point1.getX(), point1.getY()));
+		CustomNode cn2 = customGraph.getNode(new Coordinate(point2.getX(), point2.getY()));
+		CustomNode cn3 = null;
+		if ((point3.getX() != -1) && (point3.getY() != -1)) {
+			cn3 = customGraph.getNode(new Coordinate(point3.getX(), point3.getY()));
+		}
+
+		List<CustomNode> dijkstraResult = customGraph.findShortestPathDijkstra(cn1, cn2);
+
+		List<CustomNode> dijkstraResult2 = new ArrayList<>();
+		if (cn3 != null) {
+			dijkstraResult2 = customGraph.findShortestPathDijkstra(cn2, cn3);
+		}
+
+		List<Coordinate> dijkstraPath = new ArrayList<>();
+		for (CustomNode node : dijkstraResult) {
+			dijkstraPath.add(new Coordinate(node.getX(), node.getY()));
+		}
+
+		if (cn3 != null) {
+			for (CustomNode node : dijkstraResult2) {
+				dijkstraPath.add(new Coordinate(node.getX(), node.getY()));
+			}
+		}
+
+		TreeItem<Coordinate> rootItem = new TreeItem<>(dijkstraPath.get(0));
+		rootItem.setExpanded(true);
+		treeView.setRoot(rootItem);
+
+		for (Coordinate cd : dijkstraPath) {
+			TreeItem<Coordinate> treeItem = new TreeItem<>(cd);
+			rootItem.getChildren().add(treeItem);
+		}
+
+		for (Coordinate coordinate : coordinates) {
+			if (dijkstraPath.contains(coordinate)) {
+				pw.setArgb(coordinate.getX(), coordinate.getY(), 0xFF0000FF);
+			}
+		}
+		overlayImageView.setImage(wi);
+
+		// pixelUnitsText.setText("Path length: " + dijkstraPath.size() + " units");
 	}
+
+
+
 
 	public void resetPointSelection() {
 		point1 = new Coordinate(-1);

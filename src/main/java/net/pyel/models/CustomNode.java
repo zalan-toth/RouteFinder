@@ -6,6 +6,7 @@ public class CustomNode {
 	private int y;
 	private String name;
 	private boolean cultural = false;
+	private CustomNode parent;
 
 	@Override
 	public String toString() {
@@ -27,6 +28,13 @@ public class CustomNode {
 		this.y = y;
 		cultural = true;
 		this.name = name;
+	}
+	public CustomNode getParent() {
+		return parent;
+	}
+
+	public void setParent(CustomNode parent) {
+		this.parent = parent;
 	}
 
 	public int getX() {
