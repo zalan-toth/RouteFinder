@@ -32,8 +32,6 @@ public class CustomGraph {
 	public void addEdgeWithCheck(CustomEdge edge) { //This method does have a check, that slows everything down, but it's safer to use this.
 		if (nodes.containsValue(edge.getSource()) && nodes.containsValue(edge.getDestination())) {
 			edges.add(edge);
-		} else {
-			throw new IllegalArgumentException("Both nodes of the edge must be added to the graph before adding the edge.");
 		}
 	}
 
@@ -67,6 +65,9 @@ public class CustomGraph {
 
 
 	public List<CustomNode> findShortestPathBFS(CustomNode startNode, CustomNode targetNode) {
+		if (startNode == null || targetNode == null) {
+			return Collections.emptyList();
+		}
 		Map<CustomNode, CustomNode> parentMap = new HashMap<>();
 		Set<CustomNode> visited = new HashSet<>();
 		Queue<CustomNode> queue = new LinkedList<>();

@@ -279,7 +279,7 @@ public class BaseController implements Initializable {
 	}
 
 	public void doDFS() {
-		
+
 	}
 
 	public void doDjiktra() {
@@ -307,6 +307,7 @@ public class BaseController implements Initializable {
 		if (setRun) {
 
 			createGraph();
+			BackgroundController.loadData(); // Loads in the data
 
 
 			setupMainListener();
@@ -418,5 +419,54 @@ public class BaseController implements Initializable {
 		double originalY = y * ratioY;
 
 		return new Coordinate((int) originalX, (int) originalY);
+	}
+
+	//STATIC VERSION OF THE PROCESSING FOR TESTING PURPOSES
+	public static CustomGraph processImageToGraph(Coordinate[] coordinates, boolean[] valid, int width) {
+		CustomGraph customGraph = new CustomGraph();
+
+		for (Coordinate coordinate : coordinates) {
+			if (valid[coordinate.getValue()]) {
+				customGraph.addNode(coordinate, new CustomNode(coordinate.getX(), coordinate.getY()));
+			}
+		}
+
+		for (Coordinate coordinate : coordinates) {
+			if (valid[coordinate.getValue()]) {
+				//CONNECTING NODE TO THE ABOVE NODE USING AN EDGE! //TODO ABOVE
+				if ((coordinate.getY() != 0)) {
+					Coordinate coordinateAbove = new Coordinate(coordinate.getX(), coordinate.getY() - 1);
+					if (valid[coordinateAbove.getValue()]) {
+						CustomNode nodeAbove = customGraph.getNode(coordinateAbove);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeAbove));
+					}
+				}
+				//CONNECTING NODE TO THE BELOW NODE USING AN EDGE! //TODO BELOW
+				if ((coordinate.getY() != (width - 1))) {
+					Coordinate coordinateBelow = new Coordinate(coordinate.getX(), coordinate.getY() + 1);
+					if (valid[coordinateBelow.getValue()]) {
+						CustomNode nodeBelow = customGraph.getNode(coordinateBelow);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeBelow));
+					}
+				}
+				//CONNECTING NODE TO THE RIGHT NODE USING AN EDGE! //TODO RIGHT
+				if ((coordinate.getX() != (width - 1))) {
+					Coordinate coordinateToTheRight = new Coordinate(coordinate.getX() + 1, coordinate.getY());
+					if (valid[coordinateToTheRight.getValue()]) {
+						CustomNode nodeToTheRight = customGraph.getNode(coordinateToTheRight);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeToTheRight));
+					}
+				}
+				//CONNECTING NODE TO THE LEFT NODE USING AN EDGE! //TODO LEFT
+				if ((coordinate.getX() != 0)) {
+					Coordinate coordinateToTheLeft = new Coordinate(coordinate.getX() - 1, coordinate.getY());
+					if (valid[coordinateToTheLeft.getValue()]) {
+						CustomNode nodeToTheLeft = customGraph.getNode(coordinateToTheLeft);
+						customGraph.addEdge(new CustomEdge(customGraph.getNode(coordinate), nodeToTheLeft));
+					}
+				}
+			}
+		}
+		return customGraph;
 	}
 }

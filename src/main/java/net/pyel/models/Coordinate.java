@@ -1,7 +1,7 @@
 package net.pyel.models;
 
 public class Coordinate {
-	private int width = 512;
+	private int width = 4; //CHANGE THIS TO 4 WHEN DOING JUnit Testing!! 512 is the default
 	private int value;
 	private int x;
 	private int y;
@@ -16,8 +16,19 @@ public class Coordinate {
 
 	public Coordinate(int value) {
 		this.value = value;
-		x = value / width;
-		y = value % width;
+		x = value % width;
+		y = value / width;
+	}
+
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+		x = value % width;
+		y = value / width;
 	}
 
 	public Coordinate(int x, int y) {
@@ -32,8 +43,8 @@ public class Coordinate {
 
 	public void setValue(int value) {
 		this.value = value;
-		x = value / width;
-		y = value % width;
+		x = value % width;
+		y = value / width;
 	}
 
 	public void setXY(int x, int y) {
